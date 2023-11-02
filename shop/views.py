@@ -11,7 +11,6 @@ def index(request):
 
 
 def purchase(request):
-    print(request.POST)
     post = request.POST
     purchase_dict = {}
     context = {'purchase': []}
@@ -22,7 +21,6 @@ def purchase(request):
                 purchase_dict['quantity_purchased'] = post[p]
                 purchase_dict['address'] = post['address']
                 purchase_dict['person'] = post['person']
-                purchase_dict['date'] = datetime.now()
                 product = Product.objects.get(id=p.split(' ')[1])
                 purchase_dict['price'] = product.price
                 if product.quantity_on_stock < int(post[p]):
@@ -33,5 +31,4 @@ def purchase(request):
                     Product.objects.filter(id=p.split(' ')[1]).update(price=product.price * 1.2)
                 Purchase.objects.create(**purchase_dict)
                 context['purchase'].append(purchase_dict | dict(name=product.name))
-    print(context)
     return render(request, 'shop/purchase.html', context)
